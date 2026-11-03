@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f8f6">
+<title>StudySpace — NEB Class 12</title>
+<style>
+:root{--bg:#f7f8f6;--card:#fff;--ink:#202820;--muted:#738075;--line:#e5eae4;--green:#26734d;--pale:#eaf3ed;--red:#b65b52;--amber:#a8752c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;padding:18px 16px 90px}.top{display:flex;justify-content:space-between;align-items:center;margin:4px 0 20px}.brand{font-weight:800;font-size:20px;letter-spacing:-.5px}.brand span{color:var(--green)}.date{font-size:12px;color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:4px 0 14px;position:sticky;top:0;background:var(--bg);z-index:3}.nav button{border:1px solid var(--line);background:white;border-radius:20px;padding:8px 13px;color:var(--muted);white-space:nowrap}.nav button.active{background:var(--green);border-color:var(--green);color:white}.page{display:none}.page.active{display:block}.hero{background:var(--pale);border-radius:18px;padding:19px;margin-bottom:13px}.eyebrow{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--green);font-weight:700}.big{font-size:38px;font-weight:800;letter-spacing:-1.5px;margin:3px 0}.muted{color:var(--muted)}.small{font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:11px}.stat{font-size:24px;font-weight:750;margin-top:4px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.bar{height:7px;background:#edf0ec;border-radius:10px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--green);border-radius:10px}.section{font-size:17px;font-weight:750;margin:20px 0 10px}.btn{border:0;background:var(--green);color:white;border-radius:11px;padding:11px 14px;font-weight:650}.btn.secondary{background:#edf2ee;color:var(--green)}.btn.ghost{background:white;color:var(--ink);border:1px solid var(--line)}.btn.danger{background:#f8ecea;color:var(--red)}.btn:disabled{opacity:.45}.field{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);margin:5px 0 10px}.label{font-size:12px;color:var(--muted);font-weight:650;display:block;margin-top:8px}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.chip{border:1px solid var(--line);background:white;border-radius:20px;padding:7px 11px;font-size:12px}.chip.active{background:var(--pale);border-color:#b7d2c0;color:var(--green)}.task{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}.task input{accent-color:var(--green);width:18px;height:18px;margin-top:2px}.task.done .taskname{text-decoration:line-through;color:#89948a}.taskname{font-weight:600}.tag{font-size:10px;background:#f0f3ef;color:#637066;border-radius:5px;padding:3px 6px}.timer{font-size:48px;font-weight:800;text-align:center;letter-spacing:-2px;margin:12px}.center{text-align:center}.subject-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.subject{padding:12px 7px;border:1px solid var(--line);border-radius:12px;background:white;text-align:center;font-size:12px}.subject.active{border:2px solid var(--green);background:var(--pale);padding:11px 6px}.subject b{display:block;font-size:13px}.empty{color:var(--muted);font-size:13px;padding:15px 0}.listrow{padding:10px 0;border-bottom:1px solid var(--line)}.listrow:last-child{border:0}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.notice{background:#fff8e9;color:#805d24;border-radius:10px;padding:10px;font-size:12px;margin:10px 0}canvas{width:100%;height:180px}.footer{font-size:11px;color:var(--muted);text-align:center;margin-top:24px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="top"><div class="brand">Study<span>Space</span></div><div class="date" id="today"></div></header>
+ <nav class="nav" id="nav">
+  <button class="active" data-page="home">Overview</button><button data-page="tasks">My subjects</button><button data-page="timer">Study timer</button><button data-page="progress">Progress</button><button data-page="tests">Mock tests</button><button data-page="settings">Settings</button>
+ </nav>
+ <main>
+  <section class="page active" id="home">
+   <div class="hero"><div class="eyebrow">Your study space</div><div class="big" id="todayHours">0h 00m</div><div class="muted">focused today</div><div class="row" style="margin-top:15px"><span class="small" id="goalText">Daily goal: 7 hours</span><b id="goalPct">0%</b></div><div class="bar"><i id="goalBar" style="width:0%"></i></div></div>
+   <div class="grid">
+    <div class="card"><div class="muted small">Tasks completed today</div><div class="stat" id="tasksToday">0</div></div>
+    <div class="card"><div class="muted small">Current streak</div><div class="stat" id="streak">0 days</div></div>
+    <div class="card"><div class="muted small">Study sessions</div><div class="stat" id="sessionsToday">0</div></div>
+    <div class="card"><div class="muted small">Chapters completed</div><div class="stat" id="chaptersDone">0</div></div>
+   </div>
+   <div class="section">Today's subject breakdown</div><div class="card" id="subjectBreakdown"></div>
+   <div class="section">Today's focus</div><div class="card" id="todayTasks"></div>
+   <div class="section">Exam countdown</div><div class="card"><div class="row"><div><div class="muted small">NEB exam date</div><b id="examDateLabel">Not set</b></div><div class="stat" id="countdown">—</div></div><div class="small muted">Set your exam date in Settings to start the countdown.</div></div>
+  </section>
+
+  <section class="page" id="tasks">
+   <div class="section" style="margin-top:5px">Subject workspace</div>
+   <div class="subject-grid" id="subjectPicker"></div>
+   <div class="row" style="margin:18px 0 8px"><div><b id="selectedSubject">Physics</b><div class="small muted" id="subjectProgress">0% complete</div></div><button class="btn" id="addTaskBtn">+ Add task</button></div>
+   <div class="bar"><i id="subjectBar" style="width:0%"></i></div>
+   <div class="tabs" id="taskFilters"></div>
+   <div class="card" id="taskList"></div>
+   <div class="section">Add a chapter</div>
+   <div class="card"><label class="label">Chapter name</label><input class="field" id="chapterName" placeholder="e.g. Rotational dynamics"><button class="btn secondary" id="addChapter">Add chapter</button><div id="chapterList"></div></div>
+  </section>
+
+  <section class="page" id="timer">
+   <div class="section" style="margin-top:5px">Focus timer</div>
+   <div class="card">
+    <div class="tabs"><button class="chip active" id="manualMode">Manual</button><button class="chip" id="pomoMode">Pomodoro</button></div>
+    <label class="label">Subject</label><select class="field" id="timerSubject"></select>
+    <label class="label">What are you working on?</label><input class="field" id="timerTopic" placeholder="e.g. Moment of inertia numericals">
+    <div class="center"><div class="timer" id="timerDisplay">00:00:00</div><div class="muted small" id="timerStatus">Ready when you are</div></div>
+    <div id="pomoOptions" style="display:none"><label class="label">Focus length</label><select class="field" id="pomoLength"><option value="25">25 minutes</option><option value="50" selected>50 minutes</option><option value="60">60 minutes</option></select><div class="small muted center">A 5–10 minute break follows each focus block.</div></div>
+    <div class="row"><button class="btn" id="startTimer" style="flex:1">Start</button><button class="btn secondary" id="pauseTimer" disabled>Pause</button><button class="btn ghost" id="stopTimer" disabled>Finish</button></div>
+   </div>
+   <div class="notice">Only focused study time is counted. Paused time is excluded. Finish a session to save it to your history.</div>
+   <div class="section">Recent sessions</div><div class="card" id="recentSessions"></div>
+  </section>
+
+  <section class="page" id="progress">
+   <div class="section" style="margin-top:5px">Your progress over time</div>
+   <div class="card"><div class="row"><b>Study hours</b><select class="field" style="width:auto;margin:0" id="period"><option value="week">Last 7 days</option><option value="month">Last 30 days</option></select></div><canvas id="hoursChart" width="650" height="220"></canvas><div class="row"><span class="small muted">Total</span><b id="periodTotal">0 hours</b></div></div>
+   <div class="section">Subject completion</div><div class="card" id="completionChart"></div>
+   <div class="section">Revision history</div><div class="card" id="revisionHistory"></div>
+   <div class="section">Weak topics</div><div class="card"><div class="small muted">Add topics you want to revisit. Update their status as your confidence improves.</div><div class="two"><input class="field" id="weakTopic" placeholder="Topic to revisit"><select class="field" id="weakSubject"></select></div><button class="btn secondary" id="addWeak">+ Add weak topic</button><div id="weakList"></div></div>
+  </section>
+
+  <section class="page" id="tests">
+   <div class="section" style="margin-top:5px">Mock test tracker</div>
+   <div class="card"><label class="label">Subject</label><select class="field" id="testSubject"></select><div class="two"><div><label class="label">Marks obtained</label><input class="field" id="testMarks" type="number" min="0" placeholder="e.g. 62"></div><div><label class="label">Full marks</label><input class="field" id="testTotal" type="number" min="1" value="75"></div></div><label class="label">Test date</label><input class="field" id="testDate" type="date"><label class="label">Notes / topics to improve</label><input class="field" id="testNote" placeholder="Optional"><button class="btn" id="saveTest">Save result</button></div>
+   <div class="section">Results history</div><div class="card" id="testHistory"></div>
+  </section>
+
+  <section class="page" id="settings">
+   <div class="section" style="margin-top:5px">Study preferences</div>
+   <div class="card"><label class="label">Daily study goal (hours)</label><input class="field" id="dailyGoal" type="number" min="1" max="18" value="7"><label class="label">NEB exam date (if known)</label><input class="field" id="examDate" type="date"><button class="btn" id="saveSettings">Save settings</button></div>
+   <div class="section">Your data</div><div class="card"><p class="small muted">Your study records are saved in this browser on this device. They are not automatically synced to another phone or browser.</p><button class="btn secondary" id="exportData">Export backup (JSON)</button><label class="label" style="margin-top:15px">Restore from backup</label><input class="field" type="file" id="importFile" accept=".json,application/json"><button class="btn danger" id="resetData">Reset all app data</button></div>
+  </section>
+ </main>
+ <div class="footer">StudySpace · NEB Class 12 · Your effort, made visible.</div>
+</div>
+<script>
+const SUBJECTS=["Physics","Chemistry","Biology","Mathematics","English","Nepali"];
+const TYPES=["Theory","Numerical practice","Derivations","Revision","Past papers"];
+const KEY="studyspace_neb_v1";
+const blank=()=>({goal:7,examDate:"",tasks:[],chapters:[],sessions:[],tests:[],weak:[],revisions:[]});
+let data;try{data={...blank(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){data=blank()}
+let selected="Physics",filter="All",mode="manual",running=false,paused=false,startedAt=0,elapsed=0,interval=null,pomoRemaining=0,pomoBreak=false;
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function today(){return new Date().toISOString().slice(0,10)}
+function dateObj(s){return new Date(s+"T12:00:00")}
+function fmt(sec){sec=Math.max(0,Math.floor(sec));return [Math.floor(sec/3600),Math.floor(sec%3600/60),sec%60].map(x=>String(x).padStart(2,"0")).join(":")}
+function mins(sec){return Math.floor(sec/60)}
+function hours(sec){return (sec/3600).toFixed(1)}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function setOptions(id){document.getElementById(id).innerHTML=SUBJECTS.map(s=>`<option>${s}</option>`).join("")}
+["timerSubject","testSubject","weakSubject"].forEach(setOptions);
+document.getElementById("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===b.dataset.page));render()});
+function addTask(subject,title,type="Theory"){data.tasks.push({id:Date.now()+Math.random(),subject,title,type,done:false,created:today(),completedAt:""});save()}
+function completeTask(id,checked){let t=data.tasks.find(x=>x.id==id);if(!t)return;t.done=checked;t.completedAt=checked?today():"";if(checked&&t.type==="Revision")data.revisions.unshift({subject:t.subject,title:t.title,date:today()});save()}
+function render(){
+ const day=today(),todays=data.sessions.filter(s=>s.date===day),sec=todays.reduce((a,s)=>a+s.seconds,0),done=data.tasks.filter(t=>t.done&&t.completedAt===day).length;
+ document.getElementById("todayHours").textContent=hours(sec)+"h";
+ document.getElementById("goalText").textContent=`Daily goal: ${data.goal} hours`;
+ let pct=Math.min(100,sec/(data.goal*3600)*100);document.getElementById("goalPct").textContent=Math.round(pct)+"%";document.getElementById("goalBar").style.width=pct+"%";
+ document.getElementById("tasksToday").textContent=done;document.getElementById("sessionsToday").textContent=todays.length;
+ document.getElementById("chaptersDone").textContent=data.chapters.filter(c=>c.done).length;
+ let streak=0,d=new Date();while(true){let k=d.toISOString().slice(0,10);if(data.sessions.some(s=>s.date===k&&s.seconds>=60)){streak++;d.setDate(d.getDate()-1)}else break}document.getElementById("streak").textContent=streak+" days";
+ document.getElementById("subjectBreakdown").innerHTML=SUBJECTS.map(s=>{let v=todays.filter(x=>x.subject===s).reduce((a,x)=>a+x.seconds,0);return `<div class="listrow"><div class="row"><b>${s}</b><span class="small muted">${hours(v)}h</span></div></div>`}).join("");
+ let pending=data.tasks.filter(t=>!t.done).slice(0,5);document.getElementById("todayTasks").innerHTML=pending.length?pending.map(t=>`<div class="listrow"><span class="tag">${t.subject}</span> &nbsp;${escapeHtml(t.title)}</div>`).join(""):'<div class="empty">All caught up. Add tasks in My subjects.</div>';
+ let exam=data.examDate;document.getElementById("examDateLabel").textContent=exam||"Not set";document.getElementById("countdown").textContent=exam?Math.max(0,Math.ceil((dateObj(exam)-dateObj(day))/86400000))+" days":"—";
+ renderSubjects();renderSessions();renderProgress();renderTests();renderWeak();
+}
+function renderSubjects(){
+ let picker=document.getElementById("subjectPicker");picker.innerHTML=SUBJECTS.map(s=>`<button class="subject ${s===selected?"active":""}" data-s="${s}"><b>${s}</b>${data.tasks.filter(t=>t.subject===s&&t.done).length}/${data.tasks.filter(t=>t.subject===s).length} tasks</button>`).join("");
+ picker.querySelectorAll("button").forEach(b=>b.onclick=()=>{selected=b.dataset.s;renderSubjects()});
+ document.getElementById("selectedSubject").textContent=selected;
+ let all=data.tasks.filter(t=>t.subject===selected),finished=all.filter(t=>t.done).length,p=all.length?Math.round(finished/all.length*100):0;
+ document.getElementById("subjectProgress").textContent=p+"% complete · "+finished+"/"+all.length+" tasks";document.getElementById("subjectBar").style.width=p+"%";
+ document.getElementById("taskFilters").innerHTML=["All",...TYPES].map(x=>`<button class="chip ${filter===x?"active":""}" data-f="${x}">${x}</button>`).join("");
+ document.querySelectorAll("#taskFilters button").forEach(b=>b.onclick=()=>{filter=b.dataset.f;renderSubjects()});
+ let tasks=all.filter(t=>filter==="All"||t.type===filter);document.getElementById("taskList").innerHTML=tasks.length?tasks.map(t=>`<div class="task ${t.done?"done":""}"><input type="checkbox" ${t.done?"checked":""} data-id="${t.id}"><div style="flex:1"><div class="taskname">${escapeHtml(t.title)}</div><span class="tag">${t.type}</span> <span class="small muted">${t.done?"Completed "+t.completedAt:"Pending"}</span></div><button class="chip" data-del="${t.id}">×</button></div>`).join(""):'<div class="empty">No tasks here yet. Add your first task.</div>';
+ document.querySelectorAll("#taskList input").forEach(c=>c.onchange=()=>completeTask(c.dataset.id,c.checked));
+ document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{data.tasks=data.tasks.filter(t=>t.id!=b.dataset.del);save()});
+ document.getElementById("chapterList").innerHTML=data.chapters.filter(c=>c.subject===selected).map(c=>`<div class="task"><input type="checkbox" ${c.done?"checked":""} data-ch="${c.id}"><div class="taskname" style="flex:1">${escapeHtml(c.name)}</div><span class="tag">${c.done?"Done":"In progress"}</span></div>`).join("")||'<div class="empty">No chapters added for this subject yet.</div>';
+ document.querySelectorAll("[data-ch]").forEach(c=>c.onchange=()=>{let ch=data.chapters.find(x=>x.id==c.dataset.ch);ch.done=c.checked;save()});
+}
+document.getElementById("addTaskBtn").onclick=()=>{let title=prompt("Task or topic name?");if(!title)return;let type=prompt("Category: Theory, Numerical practice, Derivations, Revision, Past papers", "Theory")||"Theory";let match=TYPES.find(x=>x.toLowerCase()===type.toLowerCase());addTask(selected,title,match||"Theory")};
+document.getElementById("addChapter").onclick=()=>{let name=document.getElementById("chapterName").value.trim();if(!name)return;data.chapters.push({id:Date.now()+Math.random(),subject:selected,name,done:false});document.getElementById("chapterName").value="";save()};
+function renderSessions(){let arr=[...data.sessions].reverse().slice(0,8);document.getElementById("recentSessions").innerHTML=arr.length?arr.map(s=>`<div class="listrow"><div class="row"><b>${escapeHtml(s.subject)}</b><b>${fmt(s.seconds)}</b></div><div class="small muted">${s.date} · ${escapeHtml(s.topic||"Study session")}</div></div>`).join(""):'<div class="empty">Your completed study sessions will appear here.</div>'}
+function renderProgress(){
+ let n=document.getElementById("period").value==="week"?7:30,labels=[],vals=[],total=0;
+ for(let i=n-1;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);let k=d.toISOString().slice(0,10),v=data.sessions.filter(s=>s.date===k).reduce((a,s)=>a+s.seconds,0);labels.push(n===7?d.toLocaleDateString(undefined,{weekday:"short"}):d.getDate());vals.push(v/3600);total+=v}
+ document.getElementById("periodTotal").textContent=hours(total)+" hours";let c=document.getElementById("hoursChart"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);let max=Math.max(1,...vals),w=c.width/vals.length;
+ vals.forEach((v,i)=>{let h=v/max*155;ctx.fillStyle="#39815c";ctx.fillRect(i*w+5,175-h,w-10,h);ctx.fillStyle="#738075";ctx.font="11px system-ui";if(n===7||i%5===0||i===n-1)ctx.fillText(labels[i],i*w+5,198);});
+ document.getElementById("completionChart").innerHTML=SUBJECTS.map(s=>{let a=data.tasks.filter(t=>t.subject===s),p=a.length?Math.round(a.filter(t=>t.done).length/a.length*100):0;return `<div class="listrow"><div class="row"><b>${s}</b><span class="small muted">${p}% · ${a.filter(t=>t.done).length}/${a.length}</span></div><div class="bar"><i style="width:${p}%"></i></div></div>`}).join("");
+ document.getElementById("revisionHistory").innerHTML=data.revisions.length?data.revisions.slice(0,15).map(r=>`<div class="listrow"><b>${escapeHtml(r.title)}</b><div class="small muted">${r.subject} · ${r.date}</div></div>`).join(""):'<div class="empty">Completed revision tasks will be recorded here.</div>';
+}
+document.getElementById("period").onchange=renderProgress;
+function renderTests(){document.getElementById("testHistory").innerHTML=data.tests.length?[...data.tests].reverse().map(t=>`<div class="listrow"><div class="row"><b>${t.subject}</b><b>${t.marks}/${t.total} · ${Math.round(t.marks/t.total*100)}%</b></div><div class="small muted">${t.date}${t.note?" · "+escapeHtml(t.note):""}</div></div>`).join(""):'<div class="empty">Your mock test results will appear here.</div>'}
+document.getElementById("saveTest").onclick=()=>{let marks=+document.getElementById("testMarks").value,total=+document.getElementById("testTotal").value;if(!total||marks<0||marks>total){alert("Enter valid marks and full marks.");return}data.tests.push({subject:document.getElementById("testSubject").value,marks,total,date:document.getElementById("testDate").value||today(),note:document.getElementById("testNote").value});document.getElementById("testMarks").value="";document.getElementById("testNote").value="";save()};
+function renderWeak(){document.getElementById("weakList").innerHTML=data.weak.length?data.weak.map(w=>`<div class="listrow"><div class="row"><div><b>${escapeHtml(w.topic)}</b><div class="small muted">${w.subject}</div></div><select class="field" style="width:auto;margin:0" data-weak="${w.id}"><option ${w.status==="Needs work"?"selected":""}>Needs work</option><option ${w.status==="Improving"?"selected":""}>Improving</option><option ${w.status==="Confident"?"selected":""}>Confident</option></select></div></div>`).join(""):'<div class="empty">No weak topics added yet.</div>';document.querySelectorAll("[data-weak]").forEach(s=>s.onchange=()=>{data.weak.find(w=>w.id==s.dataset.weak).status=s.value;save()})}
+document.getElementById("addWeak").onclick=()=>{let topic=document.getElementById("weakTopic").value.trim();if(!topic)return;data.weak.push({id:Date.now(),topic,subject:document.getElementById("weakSubject").value,status:"Needs work"});document.getElementById("weakTopic").value="";save()};
+function timerTick(){let s=elapsed+(running&&!paused?Math.floor((Date.now()-startedAt)/1000):0);if(mode==="pomo"&&running&&!paused){let left=Math.max(0,pomoRemaining-Math.floor((Date.now()-startedAt)/1000));document.getElementById("timerDisplay").textContent=fmt(left);if(left===0){paused=true;running=false;clearInterval(interval);document.getElementById("timerStatus").textContent=pomoBreak?"Break finished — start your next focus block.":"Focus block complete — take a short break.";document.getElementById("startTimer").textContent="Start next block";document.getElementById("pauseTimer").disabled=true;return}}else document.getElementById("timerDisplay").textContent=fmt(s)}
+function timerUI(){document.getElementById("startTimer").disabled=running&&!paused;document.getElementById("pauseTimer").disabled=!running;document.getElementById("stopTimer").disabled=elapsed===0&&!running;document.getElementById("timerStatus").textContent=running?"Focusing…":paused?"Paused":"Ready when you are"}
+document.getElementById("manualMode").onclick=()=>{if(running)return;mode="manual";document.getElementById("manualMode").classList.add("active");document.getElementById("pomoMode").classList.remove("active");document.getElementById("pomoOptions").style.display="none";document.getElementById("timerDisplay").textContent=fmt(elapsed)};
+document.getElementById("pomoMode").onclick=()=>{if(running)return;mode="pomo";document.getElementById("pomoMode").classList.add("active");document.getElementById("manualMode").classList.remove("active");document.getElementById("pomoOptions").style.display="block";document.getElementById("timerDisplay").textContent=fmt(+document.getElementById("pomoLength").value*60)};
+document.getElementById("startTimer").onclick=()=>{if(mode==="pomo"&&(!running||paused)){if(pomoRemaining<=0||!paused){pomoBreak=false;pomoRemaining=+document.getElementById("pomoLength").value*60} }running=true;paused=false;startedAt=Date.now();interval=setInterval(timerTick,250);timerUI()};
+document.getElementById("pauseTimer").onclick=()=>{if(!running)return;if(mode==="manual")elapsed+=Math.floor((Date.now()-startedAt)/1000);else pomoRemaining=Math.max(0,pomoRemaining-Math.floor((Date.now()-startedAt)/1000));running=false;paused=true;clearInterval(interval);timerTick();timerUI()};
+document.getElementById("stopTimer").onclick=()=>{if(running){if(mode==="manual")elapsed+=Math.floor((Date.now()-startedAt)/1000);else elapsed+=Math.max(0,+document.getElementById("pomoLength").value*60-pomoRemaining+Math.floor((Date.now()-startedAt)/1000));}clearInterval(interval);running=false;paused=false;if(elapsed>0){data.sessions.push({subject:document.getElementById("timerSubject").value,topic:document.getElementById("timerTopic").value,seconds:elapsed,date:today()});}elapsed=0;pomoRemaining=0;document.getElementById("timerDisplay").textContent="00:00:00";document.getElementById("startTimer").textContent="Start";timerUI();save()};
+document.getElementById("saveSettings").onclick=()=>{data.goal=Math.max(1,Math.min(18,+document.getElementById("dailyGoal").value||7));data.examDate=document.getElementById("examDate").value;save();alert("Settings saved.")};
+document.getElementById("exportData").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="studyspace-backup.json";a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("importFile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data={...blank(),...JSON.parse(r.result)};save();alert("Backup restored.")}catch(err){alert("That file doesn't look like a StudySpace backup.")}};r.readAsText(f)};
+document.getElementById("resetData").onclick=()=>{if(confirm("Delete all StudySpace records on this device? Export a backup first if you want to keep them.")){data=blank();save()}};
+function settingsLoad(){document.getElementById("dailyGoal").value=data.goal;document.getElementById("examDate").value=data.examDate||""}
+const oldRender=render;render=function(){settingsLoad();oldRender()};
+render();
+</script>
+</body>
+</html>
