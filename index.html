@@ -108,7 +108,15 @@ function render(){
  document.getElementById("tasksToday").textContent=done;document.getElementById("sessionsToday").textContent=todays.length;
  document.getElementById("chaptersDone").textContent=data.chapters.filter(c=>c.done).length;
  let streak=0,d=new Date();while(true){let k=d.toISOString().slice(0,10);if(data.sessions.some(s=>s.date===k&&s.seconds>=60)){streak++;d.setDate(d.getDate()-1)}else break}document.getElementById("streak").textContent=streak+" days";
- document.getElementById("subjectBreakdown").innerHTML=SUBJECTS.map
+ document.getElementById("subjectBreakdown").innerHTML= document.getElementById("dashboardProgress").innerHTML=SUBJECTS.map(s=>{
+  let chapters=data.chapters.filter(c=>c.subject===s);
+  let done=chapters.filter(c=>c.done).length;
+  let pct=chapters.length?Math.round(done/chapters.length*100):0;
+  return `<div class="listrow">
+   <div class="row"><b>${s}</b><span class="small muted">${pct}% · ${done}/${chapters.length} chapters</span></div>
+   <div class="bar"><i style="width:${pct}%"></i></div>
+  </div>`;
+ }).join("");SUBJECTS.map
    document.getElementById("dashboardProgress").innerHTML=SUBJECTS.map(s=>{
   let chapters=data.chapters.filter(c=>c.subject===s);
   let done=chapters.filter(c=>c.done).length;
