@@ -34,7 +34,40 @@
    <div class="section">Today's subject breakdown</div><div class="card" id="subjectBreakdown"></div>
    <div class="section">Today's focus</div><div class="card" id="todayTasks"></div>
    <div class="section">Exam countdown</div><div class="card"><div class="row"><div><div class="muted small">NEB exam date</div><b id="examDateLabel">Not set</b></div><div class="stat" id="countdown">—</div></div><div class="small muted">Set your exam date in Settings to start the countdown.</div></div>
-  </section>
+  </section> 
+    <section class="page" id="questions">
+    <div class="section">AI Study Companion</div>
+    <div class="hero">
+      <div class="eyebrow">Understand, don't just memorise</div>
+      <h2>Curiosity starts here.</h2>
+      <p class="muted">Keep track of every concept you want to understand better.</p>
+    </div>
+
+    <div class="card">
+      <label class="label">Subject</label>
+      <select class="field" id="questionSubject">
+        <option>Physics</option>
+        <option>Chemistry</option>
+        <option>Biology</option>
+        <option>Mathematics</option>
+        <option>English</option>
+        <option>Nepali</option>
+      </select>
+
+      <label class="label">Chapter or topic</label>
+      <input class="field" id="questionChapter" placeholder="e.g. Rotational dynamics">
+
+      <label class="label">What do you want to understand?</label>
+      <textarea class="field" id="questionText" rows="4" placeholder="Write your question here..."></textarea>
+
+      <button class="btn" id="saveQuestion">Save question</button>
+    </div>
+
+    <div class="section">My curiosity notebook</div>
+    <div class="card" id="questionList">
+      <div class="empty">Your saved questions will appear here.</div>
+    </div>
+    </section>
 
   <section class="page" id="tasks">
    <div class="section" style="margin-top:5px">Subject workspace</div>
@@ -59,9 +92,50 @@
    </div>
    <div class="notice">Only focused study time is counted. Paused time is excluded. Finish a session to save it to your history.</div>
    <div class="section">Recent sessions</div><div class="card" id="recentSessions"></div>
+  </section> 
+  
+  <section class="page" id="skills">
+    <div class="section" style="margin-top:5px">Daily Skill Garden</div>
+
+    <div class="hero">
+      <div class="eyebrow">Grow beyond the syllabus</div>
+      <h2>Small skills, lasting growth.</h2>
+      <p class="muted">Record what you practise, what you discover and what you learn about yourself.</p>
+    </div>
+
+    <div class="card">
+      <label class="label">Skill</label>
+      <select class="field" id="skillName">
+        <option>Scientific illustration</option>
+        <option>Research and observation</option>
+        <option>Critical thinking</option>
+        <option>Public speaking</option>
+        <option>Writing</option>
+        <option>Communication</option>
+        <option>Creative thinking</option>
+        <option>Other</option>
+      </select>
+
+      <label class="label">Activity or practice</label>
+      <input class="field" id="skillActivity" placeholder="e.g. Drew and labelled a plant cell">
+
+      <label class="label">Time spent (minutes)</label>
+      <input class="field" id="skillDuration" type="number" min="1" placeholder="e.g. 30">
+
+      <label class="label">Reflection — what did you learn?</label>
+      <textarea class="field" id="skillReflection" rows="3" placeholder="What went well? What could you improve?"></textarea>
+
+      <button class="btn" id="saveSkill">Save activity</button>
+    </div>
+
+    <div class="section">My growth journal</div>
+    <div class="card" id="skillList">
+      <div class="empty">Your skill activities will appear here.</div>
+    </div>
   </section>
 
-  <section class="page" id="progress">
+
+  <section class="page" id="progress"> 
    <div class="section" style="margin-top:5px">Your progress over time</div>
    <div class="card"><div class="row"><b>Study hours</b><select class="field" style="width:auto;margin:0" id="period"><option value="week">Last 7 days</option><option value="month">Last 30 days</option></select></div><canvas id="hoursChart" width="650" height="220"></canvas><div class="row"><span class="small muted">Total</span><b id="periodTotal">0 hours</b></div></div>
    <div class="section">Subject completion</div><div class="card" id="completionChart"></div>
@@ -87,7 +161,7 @@
 const SUBJECTS=["Physics","Chemistry","Biology","Mathematics","English","Nepali"];
 const TYPES=["Theory","Numerical practice","Derivations","Revision","Past papers"];
 const KEY="studyspace_neb_v1";
-const blank=()=>({goal:7,examDate:"",tasks:[],chapters:[],sessions:[],tests:[],weak:[],revisions:[]});
+const blank=()=>({goal:7,examDate:"",tasks:[],chapters:[],sessions:[],tests:[],weak:[],revisions:[],questions:[],skills:[]});
 let data;try{data={...blank(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){data=blank()}
 let selected="Physics",filter="All",mode="manual",running=false,paused=false,startedAt=0,elapsed=0,interval=null,pomoRemaining=0,pomoBreak=false;
 function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
@@ -114,7 +188,7 @@ function render(){
  document.getElementById("subjectBreakdown").innerHTML=SUBJECTS.map(s=>{let v=todays.filter(x=>x.subject===s).reduce((a,x)=>a+x.seconds,0);return `<div class="listrow"><div class="row"><b>${s}</b><span class="small muted">${hours(v)}h</span></div></div>`}).join("");
  let pending=data.tasks.filter(t=>!t.done).slice(0,5);document.getElementById("todayTasks").innerHTML=pending.length?pending.map(t=>`<div class="listrow"><span class="tag">${t.subject}</span> &nbsp;${escapeHtml(t.title)}</div>`).join(""):'<div class="empty">All caught up. Add tasks in My subjects.</div>';
  let exam=data.examDate;document.getElementById("examDateLabel").textContent=exam||"Not set";document.getElementById("countdown").textContent=exam?Math.max(0,Math.ceil((dateObj(exam)-dateObj(day))/86400000))+" days":"—";
- renderSubjects();renderSessions();renderProgress();renderTests();renderWeak();
+ renderSubjects();renderSessions();renderProgress();renderTests();renderWeak();renderQuestions();renderSkills();
 }
 function renderSubjects(){
  let picker=document.getElementById("subjectPicker");picker.innerHTML=SUBJECTS.map(s=>`<button class="subject ${s===selected?"active":""}" data-s="${s}"><b>${s}</b>${data.tasks.filter(t=>t.subject===s&&t.done).length}/${data.tasks.filter(t=>t.subject===s).length} tasks</button>`).join("");
@@ -146,6 +220,117 @@ function renderTests(){document.getElementById("testHistory").innerHTML=data.tes
 document.getElementById("saveTest").onclick=()=>{let marks=+document.getElementById("testMarks").value,total=+document.getElementById("testTotal").value;if(!total||marks<0||marks>total){alert("Enter valid marks and full marks.");return}data.tests.push({subject:document.getElementById("testSubject").value,marks,total,date:document.getElementById("testDate").value||today(),note:document.getElementById("testNote").value});document.getElementById("testMarks").value="";document.getElementById("testNote").value="";save()};
 function renderWeak(){document.getElementById("weakList").innerHTML=data.weak.length?data.weak.map(w=>`<div class="listrow"><div class="row"><div><b>${escapeHtml(w.topic)}</b><div class="small muted">${w.subject}</div></div><select class="field" style="width:auto;margin:0" data-weak="${w.id}"><option ${w.status==="Needs work"?"selected":""}>Needs work</option><option ${w.status==="Improving"?"selected":""}>Improving</option><option ${w.status==="Confident"?"selected":""}>Confident</option></select></div></div>`).join(""):'<div class="empty">No weak topics added yet.</div>';document.querySelectorAll("[data-weak]").forEach(s=>s.onchange=()=>{data.weak.find(w=>w.id==s.dataset.weak).status=s.value;save()})}
 document.getElementById("addWeak").onclick=()=>{let topic=document.getElementById("weakTopic").value.trim();if(!topic)return;data.weak.push({id:Date.now(),topic,subject:document.getElementById("weakSubject").value,status:"Needs work"});document.getElementById("weakTopic").value="";save()};
+ 
+function renderQuestions(){
+  const list=document.getElementById("questionList");
+  if(!list)return;
+  list.innerHTML=data.questions.length
+    ? [...data.questions].reverse().map(q=>`
+      <div class="listrow">
+        <div class="row">
+          <b>${escapeHtml(q.subject)} · ${escapeHtml(q.chapter||"General")}</b>
+          <button class="chip" data-qdel="${q.id}">×</button>
+        </div>
+        <p>${escapeHtml(q.text)}</p>
+        <div class="row">
+          <span class="small muted">${q.date}</span>
+          <select class="field" style="width:auto;margin:0" data-qstatus="${q.id}">
+            <option ${q.status==="Needs understanding"?"selected":""}>Needs understanding</option>
+            <option ${q.status==="Understood"?"selected":""}>Understood</option>
+            <option ${q.status==="Revise again"?"selected":""}>Revise again</option>
+          </select>
+        </div>
+      </div>
+    `).join("")
+    : '<div class="empty">Your saved questions will appear here.</div>';
+
+  list.querySelectorAll("[data-qstatus]").forEach(el=>{
+    el.onchange=()=>{
+      const q=data.questions.find(x=>x.id==el.dataset.qstatus);
+      if(q){q.status=el.value;save()}
+    };
+  });
+
+  list.querySelectorAll("[data-qdel]").forEach(el=>{
+    el.onclick=()=>{
+      data.questions=data.questions.filter(q=>q.id!=el.dataset.qdel);
+      save();
+    };
+  });
+}
+
+document.getElementById("saveQuestion").onclick=()=>{
+  const chapter=document.getElementById("questionChapter").value.trim();
+  const question=document.getElementById("questionText").value.trim();
+  if(!question){
+    alert("Write your question first.");
+    return;
+  }
+
+  data.questions.push({
+    id:Date.now()+Math.random(),
+    subject:document.getElementById("questionSubject").value,
+    chapter,
+    text:question,
+    status:"Needs understanding",
+    date:today()
+  });
+
+  document.getElementById("questionChapter").value="";
+  document.getElementById("questionText").value="";
+  save();
+};
+
+function renderSkills(){
+  const list=document.getElementById("skillList");
+  if(!list)return;
+
+  list.innerHTML=data.skills.length
+    ? [...data.skills].reverse().map(s=>`
+      <div class="listrow">
+        <div class="row">
+          <b>${escapeHtml(s.name)}</b>
+          <button class="chip" data-skilldel="${s.id}">×</button>
+        </div>
+        <div>${escapeHtml(s.activity)}</div>
+        <div class="small muted">${s.date} · ${s.duration} minutes</div>
+        ${s.reflection?`<p class="small">${escapeHtml(s.reflection)}</p>`:""}
+      </div>
+    `).join("")
+    : '<div class="empty">Your skill activities will appear here.</div>';
+
+  list.querySelectorAll("[data-skilldel]").forEach(el=>{
+    el.onclick=()=>{
+      data.skills=data.skills.filter(s=>s.id!=el.dataset.skilldel);
+      save();
+    };
+  });
+}
+
+document.getElementById("saveSkill").onclick=()=>{
+  const activity=document.getElementById("skillActivity").value.trim();
+  const duration=Number(document.getElementById("skillDuration").value);
+
+  if(!activity||!Number.isFinite(duration)||duration<=0){
+    alert("Please enter an activity and a valid duration.");
+    return;
+  }
+
+  data.skills.push({
+    id:Date.now()+Math.random(),
+    name:document.getElementById("skillName").value,
+    activity,
+    duration,
+    reflection:document.getElementById("skillReflection").value.trim(),
+    date:today()
+  });
+
+  document.getElementById("skillActivity").value="";
+  document.getElementById("skillDuration").value="";
+  document.getElementById("skillReflection").value="";
+  save();
+};
+
 function timerTick(){let s=elapsed+(running&&!paused?Math.floor((Date.now()-startedAt)/1000):0);if(mode==="pomo"&&running&&!paused){let left=Math.max(0,pomoRemaining-Math.floor((Date.now()-startedAt)/1000));document.getElementById("timerDisplay").textContent=fmt(left);if(left===0){paused=true;running=false;clearInterval(interval);document.getElementById("timerStatus").textContent=pomoBreak?"Break finished — start your next focus block.":"Focus block complete — take a short break.";document.getElementById("startTimer").textContent="Start next block";document.getElementById("pauseTimer").disabled=true;return}}else document.getElementById("timerDisplay").textContent=fmt(s)}
 function timerUI(){document.getElementById("startTimer").disabled=running&&!paused;document.getElementById("pauseTimer").disabled=!running;document.getElementById("stopTimer").disabled=elapsed===0&&!running;document.getElementById("timerStatus").textContent=running?"Focusing…":paused?"Paused":"Ready when you are"}
 document.getElementById("manualMode").onclick=()=>{if(running)return;mode="manual";document.getElementById("manualMode").classList.add("active");document.getElementById("pomoMode").classList.remove("active");document.getElementById("pomoOptions").style.display="none";document.getElementById("timerDisplay").textContent=fmt(elapsed)};
