@@ -27,6 +27,8 @@
     <div class="card"><div class="muted small">Chapters completed</div><div class="stat" id="chaptersDone">0</div></div>
    </div>
    <div class="section">Today's subject breakdown</div><div class="card" id="subjectBreakdown"></div>
+   <div class="section">Overall subject progress</div>
+<div class="card" id="dashboardProgress"></div>
    <div class="section">Today's focus</div><div class="card" id="todayTasks"></div>
    <div class="section">Exam countdown</div><div class="card"><div class="row"><div><div class="muted small">NEB exam date</div><b id="examDateLabel">Not set</b></div><div class="stat" id="countdown">—</div></div><div class="small muted">Set your exam date in Settings to start the countdown.</div></div>
   </section>
@@ -106,7 +108,16 @@ function render(){
  document.getElementById("tasksToday").textContent=done;document.getElementById("sessionsToday").textContent=todays.length;
  document.getElementById("chaptersDone").textContent=data.chapters.filter(c=>c.done).length;
  let streak=0,d=new Date();while(true){let k=d.toISOString().slice(0,10);if(data.sessions.some(s=>s.date===k&&s.seconds>=60)){streak++;d.setDate(d.getDate()-1)}else break}document.getElementById("streak").textContent=streak+" days";
- document.getElementById("subjectBreakdown").innerHTML=SUBJECTS.map(s=>{let v=todays.filter(x=>x.subject===s).reduce((a,x)=>a+x.seconds,0);return `<div class="listrow"><div class="row"><b>${s}</b><span class="small muted">${hours(v)}h</span></div></div>`}).join("");
+ document.getElementById("subjectBreakdown").innerHTML=SUBJECTS.map
+   document.getElementById("dashboardProgress").innerHTML=SUBJECTS.map(s=>{
+  let chapters=data.chapters.filter(c=>c.subject===s);
+  let done=chapters.filter(c=>c.done).length;
+  let pct=chapters.length?Math.round(done/chapters.length*100):0;
+  return `<div class="listrow">
+   <div class="row"><b>${s}</b><span class="small muted">${pct}% · ${done}/${chapters.length} chapters</span></div>
+   <div class="bar"><i style="width:${pct}%"></i></div>
+  </div>`;
+ }).join("");(s=>{let v=todays.filter(x=>x.subject===s).reduce((a,x)=>a+x.seconds,0);return `<div class="listrow"><div class="row"><b>${s}</b><span class="small muted">${hours(v)}h</span></div></div>`}).join("");
  let pending=data.tasks.filter(t=>!t.done).slice(0,5);document.getElementById("todayTasks").innerHTML=pending.length?pending.map(t=>`<div class="listrow"><span class="tag">${t.subject}</span> &nbsp;${escapeHtml(t.title)}</div>`).join(""):'<div class="empty">All caught up. Add tasks in My subjects.</div>';
  let exam=data.examDate;document.getElementById("examDateLabel").textContent=exam||"Not set";document.getElementById("countdown").textContent=exam?Math.max(0,Math.ceil((dateObj(exam)-dateObj(day))/86400000))+" days":"—";
  renderSubjects();renderSessions();renderProgress();renderTests();renderWeak();
